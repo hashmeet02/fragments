@@ -11,5 +11,8 @@
     "url": "git+https://github.com/hashmeet02/fragments.git"
   },
   "author": "Hashmeet Singh Saini",
-  "license": "UNLICENSED"
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "prettier": "3.1.1"
+  }
 }
