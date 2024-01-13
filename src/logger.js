@@ -6,6 +6,9 @@ const options = { level: process.env.LOG_LEVEL || 'info' };
 // If we're doing `debug` logging, make the logs easier to read
 if (options.level === 'debug') {
   // https://github.com/pinojs/pino-pretty
+  Object.keys(process.env).forEach(key => {
+    console.debug(`${key}: ${process.env[key]}`);
+  });
   options.transport = {
     target: 'pino-pretty',
     options: {
