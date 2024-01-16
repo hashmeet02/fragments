@@ -8,6 +8,6 @@ module.exports = (req, res) => {
   res.status(200).json({
     status: 'ok',
     // TODO: change me
-    fragments: "I changed myself from an empty array to a string",
+    fragments: [],
   });
 };
