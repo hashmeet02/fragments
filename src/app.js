@@ -8,6 +8,8 @@ const compression = require('compression');
 const passport = require('passport');
 const authenticate = require('./auth');
 
+const {createErrorResponse}= require("./response");
+
 // author and version from our package.json file
 // TODO: make sure you have updated your name in the `author` section
 //const { author, version } = require('../package.json');
@@ -64,13 +66,7 @@ app.use((err, req, res, next) => {
     logger.error({ err }, `Error processing request`);
   }
 
-  res.status(status).json({
-    status: 'error',
-    error: {
-      message,
-      code: status,
-    },
-  });
+  res.status(status).json(createErrorResponse(status, message));
 });
 
 // Export our `app` so we can access it in server.js
