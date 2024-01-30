@@ -32,7 +32,6 @@ router.get('/', (req, res) => {
   try{
     res.status(200).json(createSuccessResponse({
       author,
-      // Use your own GitHub URL for this!
       githubUrl: 'https://github.com/hashmeet02/fragments',
       version,
     }));
