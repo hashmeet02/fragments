@@ -42,6 +42,8 @@ describe('POST /v1/fragments', () => {
       .auth('user1@email.com', 'password1');
       const fragment=await readFragment(res.body.fragment.ownerId, res.body.fragment.id);
       expect(res.body.fragment).toEqual(fragment);
+      const expectedLocation = `${process.env.API_URL || res.headers.host}/v1/fragments/${fragment.id}`;
+      expect(res.headers.location).toEqual(expectedLocation);
     })
 
   });
