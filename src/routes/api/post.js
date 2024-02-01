@@ -5,7 +5,7 @@ const logger=require('../../logger');
 
 module.exports=async (req, res)=>{
     let fragment;
-    const api = process.env.API_URL;
+    const api = process.env.API_URL || req.header.host;
 
     try{
         fragment=new Fragment({
@@ -15,6 +15,7 @@ module.exports=async (req, res)=>{
         });
         await fragment.save();
         await fragment.setData(req.body);
+        logger.debug({ fragment }, 'New fragment created');
         res.location(`${api}/v1/fragments/${fragment.id}`);
         res.status(201).json(createSuccessResponse({fragment}));
 
