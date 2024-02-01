@@ -11,15 +11,16 @@ module.exports=async (req, res)=>{
     let fragmentMetadata=await Fragment.byId(req.user, query.name);
     let fragment=await fragmentMetadata.getData();
 
-    if(query.extension=='' || fragmentMetadata.type.endsWith(ext)){
-      res.setHeader('Content-type', fragmentMetadata.type);
+    if(query.ext=='' || fragmentMetadata.type.endsWith(ext)){
+      res.setHeader('Content-type', fragmentMetadata.getData());
       res.status(200).send(Buffer.from(fragment));
       logger.info(
         {fragmentData:fragment, contentType: fragmentMetadata.type},'successfully received Fragment data'
       );
     }else{
       try{
-        if (fragmentMetadata.isText()){
+        if (fragmentMetadata.isText){
+          logger.debug(true);
           res.setHeader('Content-type','text/plain');
           res.status(200).send(Buffer.from(fragment));
           logger.info(

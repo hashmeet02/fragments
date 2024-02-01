@@ -92,7 +92,7 @@ class Fragment {
       return new Fragment(await readFragment(ownerId, id));
     }catch(err){
       logger.Error(err);
-      throw new Error(`Fragment with id can't be found`)
+      throw new Error(`Fragment with ${id} can't be found`)
     }
   }
 
