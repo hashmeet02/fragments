@@ -1,3 +1,8 @@
+// src/routes/api/post.js
+
+/**
+ * creates and posts the fragment under the given user and stores it into the database
+ */
 
 const {Fragment}=require('../../model/fragment');
 const {createSuccessResponse, createErrorResponse} = require ('../../response');

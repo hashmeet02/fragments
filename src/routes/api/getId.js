@@ -1,3 +1,9 @@
+// src/routes/api/getId.js
+
+/**
+ * Get a the fragment for the current user that matches the 
+ * id sent as parameter and is of appropriate extension type
+ */
 const { createErrorResponse } = require('../../response');
 const { Fragment } = require('../../model/fragment');
 const logger = require('../../logger');
