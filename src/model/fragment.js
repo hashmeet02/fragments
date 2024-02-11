@@ -32,39 +32,41 @@ const supportedTypes = [
 
 class Fragment {
   constructor({ id, ownerId, created, updated, type, size = 0 }) {
-    if (id){
-      this.id=id;
-    }else{
-      this.id=randomUUID();
+    if (id) {
+      this.id = id;
+    } else {
+      this.id = randomUUID();
     }
 
-    if (ownerId){
-      this.ownerId=ownerId;
-    }else{
+    if (ownerId) {
+      this.ownerId = ownerId;
+    } else {
       throw new Error(`Required ownerId. Received ownerId:${ownerId}`);
     }
-    
-    if(Fragment.isSupportedType(type)){
-      this.type=type;
-    }else{
+
+    if (Fragment.isSupportedType(type)) {
+      this.type = type;
+    } else {
       throw new Error(`Fragment type is invalid. Received type:${type}`);
     }
 
-    if(size < 0 || typeof size === 'string'){
-      throw new Error(`Invalid size. Size must be a positive number but the received size is:${size}`);
-    }else{
-      this.size=size;
+    if (size < 0 || typeof size === 'string') {
+      throw new Error(
+        `Invalid size. Size must be a positive number but the received size is:${size}`
+      );
+    } else {
+      this.size = size;
     }
 
-    if(created){
-      this.created=created;
-    }else{
-      this.created=new Date().toISOString();
+    if (created) {
+      this.created = created;
+    } else {
+      this.created = new Date().toISOString();
     }
-    if(updated){
-      this.updated=updated;
-    }else{
-      this.updated=new Date().toISOString();
+    if (updated) {
+      this.updated = updated;
+    } else {
+      this.updated = new Date().toISOString();
     }
   }
 
@@ -75,10 +77,10 @@ class Fragment {
    * @returns Promise<Array<Fragment>>
    */
   static async byUser(ownerId, expand = false) {
-    try{
-      const fragments= await listFragments(ownerId,expand);
+    try {
+      const fragments = await listFragments(ownerId, expand);
       return fragments;
-    }catch(err){
+    } catch (err) {
       throw new Error(`Error retrieving data for user ${ownerId}`);
     }
   }
@@ -90,11 +92,11 @@ class Fragment {
    * @returns Promise<Fragment>
    */
   static async byId(ownerId, id) {
-    try{
+    try {
       return new Fragment(await readFragment(ownerId, id));
-    }catch(err){
+    } catch (err) {
       logger.Error(err);
-      throw new Error(`Fragment with ${id} can't be found`)
+      throw new Error(`Fragment with ${id} can't be found`);
     }
   }
 
@@ -105,7 +107,7 @@ class Fragment {
    * @returns Promise<void>
    */
   static delete(ownerId, id) {
-    return deleteFragment(ownerId,id)
+    return deleteFragment(ownerId, id);
   }
 
   /**
@@ -113,7 +115,7 @@ class Fragment {
    * @returns Promise<void>
    */
   save() {
-    this.updated= new Date().toISOString();
+    this.updated = new Date().toISOString();
     return writeFragment(this);
   }
 
@@ -122,15 +124,15 @@ class Fragment {
    * @returns Promise<Buffer>
    */
   getData() {
-    try{
-      return new Promise((resolve, reject)=>{
+    try {
+      return new Promise((resolve, reject) => {
         readFragmentData(this.ownerId, this.id)
-        .then((data)=>resolve(Buffer.from(data)))
-        .catch(()=>{
-          reject(new Error());
-        });
+          .then((data) => resolve(Buffer.from(data)))
+          .catch(() => {
+            reject(new Error());
+          });
       });
-    }catch (err){
+    } catch (err) {
       throw new Error(`Data for this fragment can't be retrieved`);
     }
   }
@@ -141,11 +143,11 @@ class Fragment {
    * @returns Promise<void>
    */
   async setData(data) {
-    if(!data){
-      throw new Error(`Empty data can't be processed`)
-    }else{
-      this.updated=new Date().toISOString();
-      this.size=Buffer.byteLength(data);
+    if (!data) {
+      throw new Error(`Empty data can't be processed`);
+    } else {
+      this.updated = new Date().toISOString();
+      this.size = Buffer.byteLength(data);
       await writeFragment(this);
       return await writeFragmentData(this.ownerId, this.id, data);
     }
@@ -174,9 +176,9 @@ class Fragment {
    * @returns {Array<string>} list of supported mime types
    */
   get formats() {
-    let result=[];
-    if (this.type.includes('text/plain')){
-      result=['text/plain'];
+    let result = [];
+    if (this.type.includes('text/plain')) {
+      result = ['text/plain'];
     }
     return result;
   }
@@ -187,9 +189,9 @@ class Fragment {
    * @returns {boolean} true if we support this Content-Type (i.e., type/subtype)
    */
   static isSupportedType(value) {
-    let result=false;
-    if (supportedTypes.includes(value)){
-      result=true;
+    let result = false;
+    if (supportedTypes.includes(value)) {
+      result = true;
     }
     return result;
   }

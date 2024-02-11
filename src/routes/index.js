@@ -29,14 +29,16 @@ router.get('/', (req, res) => {
   // Client's shouldn't cache this response (always request it fresh)
   res.setHeader('Cache-Control', 'no-cache');
   // Send a 200 'OK' response
-  try{
-    res.status(200).json(createSuccessResponse({
-      author,
-      githubUrl: 'https://github.com/hashmeet02/fragments',
-      version,
-    }));
-  }catch(error){
-    res.status(500).json(createErrorResponse(500, "Internal Server Error"))
+  try {
+    res.status(200).json(
+      createSuccessResponse({
+        author,
+        githubUrl: 'https://github.com/hashmeet02/fragments',
+        version,
+      })
+    );
+  } catch (error) {
+    res.status(500).json(createErrorResponse(500, 'Internal Server Error'));
   }
 });
 

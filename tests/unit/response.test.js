@@ -15,7 +15,7 @@ describe('API Responses', () => {
     });
   });
 
-    test('createSuccessResponse()', () => {
+  test('createSuccessResponse()', () => {
     // No arg passed
     const successResponse = createSuccessResponse();
     // Expect the result to look like the following

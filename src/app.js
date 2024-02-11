@@ -8,7 +8,7 @@ const compression = require('compression');
 const passport = require('passport');
 const authenticate = require('./auth');
 
-const {createErrorResponse}= require("./response");
+const { createErrorResponse } = require('./response');
 
 const logger = require('./logger');
 const pino = require('pino-http')({

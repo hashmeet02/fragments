@@ -4,8 +4,8 @@
  * The main entry-point for the v1 version of the fragments API.
  */
 const express = require('express');
-const {Fragment} =require('../../model/fragment');
-const contentType= require ('content-type');
+const { Fragment } = require('../../model/fragment');
+const contentType = require('content-type');
 
 // Create a router on which to mount our API endpoints
 const router = express.Router();
