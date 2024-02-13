@@ -30,7 +30,7 @@ describe('POST /v1/fragments', () => {
       .auth('user1@email.com', 'password1');
     expect(res.statusCode).toBe(415);
     expect(res.body.status).toBe('error');
-    expect(res.body.error.message).toBe('Non-supported content-type');
+    expect(res.body.error.message).toBe('Content-Type not supported');
   });
 
   //All requested properties are successfully received.
