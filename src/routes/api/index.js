@@ -34,4 +34,7 @@ router.get('/fragments', require('./get'));
 //GET /v1/fragments/:id
 router.get('/fragments/:id', require('./getId'));
 
+//GET /v1/fragments/:id/info
+router.get('/fragments/:id/info', require('./getIdInfo'));
+
 module.exports = router;
