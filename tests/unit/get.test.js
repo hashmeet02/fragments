@@ -3,7 +3,7 @@
 const request = require('supertest');
 const hash = require('../../src/hash');
 const app = require('../../src/app');
-const { readFragmentData } = require('../../src/model/data');
+const { readFragmentData, listFragments } = require('../../src/model/data');
 
 describe('GET /v1/fragments', () => {
   // If the request is missing the Authorization header, it should be forbidden
@@ -66,4 +66,48 @@ describe('GET /v1/fragments', () => {
     expect(res.statusCode).toBe(200);
     expect(res.text).toBe('<h1> Test Fragment </h1>');
   });
+
+  //GET /fragments?expanded=11 should be able to get a list of expanded fragments for the authenticated user.
+  test('authenticated user gets list of fragments with GET /fragmnts/?expanded=1', async()=>{
+    await request(app)
+      .post('/v1/fragments')
+      .send('sample fragment 1')
+      .set('Content-type', 'text/plain')
+      .auth('user1@email.com', 'password1');
+    await request(app)
+      .post('/v1/fragments')
+      .send('sample fragment 2')
+      .set('Content-type', 'text/plain')
+      .auth('user1@email.com', 'password1');
+    const fragmentsList=await(listFragments(hash('user1@email.com'),1));
+    const res=await request(app)
+      .get('/v1/fragments?expand=1')
+      .auth('user1@email.com',"password1");
+    expect(res.statusCode).toBe(200);
+    expect(res.body.status).toBe('ok');
+    expect(res.body.fragments).toEqual(fragmentsList);
+  })
+
+    //GET /fragments should be able to get a list of fragments ids for the authenticated user.
+    test('authenticated user gets list of fragments with GET /fragmnts/', async()=>{
+      const res1=await request(app)
+        .post('/v1/fragments')
+        .send('sample fragment 1')
+        .set('Content-type', 'text/plain')
+        .auth('user1@email.com', 'password1');
+      const res2= await request(app)
+        .post('/v1/fragments')
+        .send('sample fragment 2')
+        .set('Content-type', 'text/plain')
+        .auth('user1@email.com', 'password1');
+      const fragmentsList=await(listFragments(hash('user1@email.com'),0));
+      const res=await request(app)
+        .get('/v1/fragments')
+        .auth('user1@email.com',"password1");
+      expect(res.statusCode).toBe(200);
+      expect(res.body.status).toBe('ok');
+      expect(res.body.fragments).toEqual(fragmentsList);
+    })
+
+
 });
