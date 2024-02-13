@@ -90,12 +90,12 @@ describe('GET /v1/fragments', () => {
 
     //GET /fragments should be able to get a list of fragments ids for the authenticated user.
     test('authenticated user gets list of fragments with GET /fragmnts/', async()=>{
-      const res1=await request(app)
+      await request(app)
         .post('/v1/fragments')
         .send('sample fragment 1')
         .set('Content-type', 'text/plain')
         .auth('user1@email.com', 'password1');
-      const res2= await request(app)
+      await request(app)
         .post('/v1/fragments')
         .send('sample fragment 2')
         .set('Content-type', 'text/plain')
