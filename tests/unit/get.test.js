@@ -126,7 +126,7 @@ describe('GET /v1/fragments', () => {
 
     //GET/ fragments/:id/info should throw 404 error with invalid id
     test('Get fragments metadata using valid Id', async()=>{
-      const req=await request(app)
+      await request(app)
         .post('/v1/fragments')
         .send('sample fragment 1')
         .set('Content-type', 'text/plain')
