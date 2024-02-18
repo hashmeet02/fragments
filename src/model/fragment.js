@@ -77,12 +77,9 @@ class Fragment {
    * @returns Promise<Array<Fragment>>
    */
   static async byUser(ownerId, expand = false) {
-    try {
-      const fragments = await listFragments(ownerId, expand);
-      return fragments;
-    } catch (err) {
-      throw new Error(`Error retrieving data for user ${ownerId}`);
-    }
+    logger.info({ownerId, expand}, "byUser()");
+    const result=await listFragments(ownerId, expand);
+    return result;
   }
 
   /**
@@ -92,12 +89,10 @@ class Fragment {
    * @returns Promise<Fragment>
    */
   static async byId(ownerId, id) {
-    try {
-      return new Fragment(await readFragment(ownerId, id));
-    } catch (err) {
-      logger.Error(err);
-      throw new Error(`Fragment with ${id} can't be found`);
-    }
+    logger.info({ownerId, id}, "byId()");
+    const result=await readFragment(ownerId, id);
+    if (!result) throw new Error();
+    return result;
   }
 
   /**
@@ -143,14 +138,10 @@ class Fragment {
    * @returns Promise<void>
    */
   async setData(data) {
-    if (!data) {
-      throw new Error(`Empty data can't be processed`);
-    } else {
-      this.updated = new Date().toISOString();
-      this.size = Buffer.byteLength(data);
-      await writeFragment(this);
-      return await writeFragmentData(this.ownerId, this.id, data);
-    }
+    this.size=Buffer.byteLength(data);
+    this.updated=new
+    Date(Date.now()).toISOString();
+    return await writeFragmentData(this.ownerId, this.id, data);
   }
 
   /**
@@ -177,8 +168,15 @@ class Fragment {
    */
   get formats() {
     let result = [];
-    if (this.type.includes('text/plain')) {
-      result = ['text/plain'];
+    if (this.type.includes('plain')) {
+      result.push(this.mimeType);
+    }else if (this.type.includes('html')){
+      result.push("text/plain");
+      this.push(this.mimeType);
+    }else if(this.type.includes("markdown")){
+      result.push('text/plain');
+      result.push('text/html');
+      result.push(this.mimeType);
     }
     return result;
   }

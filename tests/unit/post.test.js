@@ -34,7 +34,7 @@ describe('POST /v1/fragments', () => {
   });
 
   //All requested properties are successfully received.
-  test('all neccessary properties are successfully received', async () => {
+  test('all necessary properties are successfully received', async () => {
     const res = await request(app)
       .post('/v1/fragments')
       .send('test fragment data')

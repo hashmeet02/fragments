@@ -68,7 +68,7 @@ describe('GET /v1/fragments', () => {
   });
 
   //GET /fragments?expanded=11 should be able to get a list of expanded fragments for the authenticated user.
-  test('authenticated user gets list of fragments with GET /fragmnts/?expanded=1', async()=>{
+  test('authenticated user gets list of fragments with GET /fragments/?expanded=1', async()=>{
     await request(app)
       .post('/v1/fragments')
       .send('sample fragment 1')
@@ -89,7 +89,7 @@ describe('GET /v1/fragments', () => {
   })
 
     //GET /fragments should be able to get a list of fragments ids for the authenticated user.
-    test('authenticated user gets list of fragments with GET /fragmnts/', async()=>{
+    test('authenticated user gets list of fragments with GET /fragments/', async()=>{
       await request(app)
         .post('/v1/fragments')
         .send('sample fragment 1')
