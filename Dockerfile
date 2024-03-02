@@ -55,7 +55,7 @@ HEALTHCHECK --interval=15s --timeout=30s --start-period=10s --retries=3 \
   CMD curl --fail http://localhost:${PORT}/ || exit 1
   
 # Start the container by running our server
-CMD npm start
+CMD ["npm", "start"]
 
 # We run our service on port 8080
 EXPOSE 8080
