@@ -67,6 +67,51 @@ describe('GET /v1/fragments', () => {
     expect(res.text).toBe('<h1> Test Fragment </h1>');
   });
 
+  //test to successfully convert markdown to markdown
+  test('markdown extension is successfully returned as markdown', async () => {
+    const req = await request(app)
+      .post('/v1/fragments/')
+      .auth('user1@email.com', 'password1')
+      .send('# Test Fragment')
+      .set('Content-type', 'text/markdown');
+    const id = req.body.fragment.id;
+    const res = await request(app)
+      .get(`/v1/fragments/${id}.md`)
+      .auth('user1@email.com', 'password1');
+    expect(res.statusCode).toBe(200);
+    expect(res.text).toBe('# Test Fragment');
+  });
+
+  //test to successfully convert markdown extension to html
+  test('markdown extension is successfully converted to html', async () => {
+    const req = await request(app)
+      .post('/v1/fragments/')
+      .auth('user1@email.com', 'password1')
+      .send('# Test Fragment')
+      .set('Content-type', 'text/markdown');
+    const id = req.body.fragment.id;
+    const res = await request(app)
+      .get(`/v1/fragments/${id}.html`)
+      .auth('user1@email.com', 'password1');
+    expect(res.statusCode).toBe(200);
+    expect(res.text).toBe('<h1># Test Fragment</h1>\n');
+  });
+
+    //test to produce error during conversion unsupported extension
+    test('user gets error when converting text/plain to unsupported extension', async () => {
+      const req = await request(app)
+        .post('/v1/fragments/')
+        .auth('user1@email.com', 'password1')
+        .send('Test Fragment')
+        .set('Content-type', 'text/plain');
+      const id = req.body.fragment.id;
+      const res = await request(app)
+        .get(`/v1/fragments/${id}.html`)
+        .auth('user1@email.com', 'password1');
+      expect(res.statusCode).toBe(415);
+    });
+
+
   //GET /fragments?expanded=11 should be able to get a list of expanded fragments for the authenticated user.
   test('authenticated user gets list of fragments with GET /fragments/?expanded=1', async()=>{
     await request(app)
