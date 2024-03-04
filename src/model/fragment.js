@@ -159,7 +159,7 @@ class Fragment {
    * @returns {boolean} true if fragment's type is text/*
    */
   get isText() {
-    return this.mimeType.startsWith('text/');
+    return this.mimeType.startsWith('text');
   }
 
   /**
@@ -172,7 +172,7 @@ class Fragment {
       result.push(this.mimeType);
     }else if (this.type.includes('html')){
       result.push("text/plain");
-      this.push(this.mimeType);
+      result.push(this.mimeType);
     }else if(this.type.includes("markdown")){
       result.push('text/plain');
       result.push('text/html');
@@ -187,11 +187,7 @@ class Fragment {
    * @returns {boolean} true if we support this Content-Type (i.e., type/subtype)
    */
   static isSupportedType(value) {
-    let result = false;
-    if (supportedTypes.includes(value)) {
-      result = true;
-    }
-    return result;
+    return supportedTypes.includes(value);
   }
 }
 

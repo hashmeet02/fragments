@@ -23,14 +23,16 @@ module.exports = async (req, res) => {
         await fragment.setData(req.body);
         logger.debug({ fragment }, 'New fragment created');
       
-        res.location(`${api}/v1/fragments/${fragment.id}`);
-        res.status(201).json(createSuccessResponse({ fragment }));
+        res
+        .set('location', `${api}/v1/fragments/${fragment.id}`)
+        .status(201)
+        .send(createSuccessResponse({ fragment }));
       
         logger.info({ fragment: fragment }, `Fragment posted successfully`);
         
       } catch (err) {
-        logger.error('Unsupported Fragment Content-type');
-        res.status(415).json(createErrorResponse(415, 'Non-supported content-type'));
+        logger.error("Unable to POST the fragment");
+        res.status(404).json(createErrorResponse(404, 'Unable to POST the fragment'));
     }
   }
 };

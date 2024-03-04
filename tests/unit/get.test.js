@@ -45,8 +45,8 @@ describe('GET /v1/fragments', () => {
       .auth('user1@email.com', 'password1')
       .send('Test Fragment')
       .set('Content-type', 'text/plain');
-    const fragment = await readFragmentData(hash('user1@email.com'), req.body.fragment.id);
     const id = req.body.fragment.id;
+    const fragment = await readFragmentData(hash('user1@email.com'), req.body.fragment.id);
     const res = await request(app).get(`/v1/fragments/${id}`).auth('user1@email.com', 'password1');
 
     expect(res.text).toBe(fragment.toString());
