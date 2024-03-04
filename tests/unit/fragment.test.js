@@ -166,6 +166,28 @@ describe('Fragment class', () => {
     });
   });
 
+  describe('formats', () => {
+    test('formats returns the expected result for plain text', () => {
+      const fragment = new Fragment({
+        ownerId: '1234',
+        type: 'text/html',
+        size: 0,
+      });
+      expect(fragment.formats).toEqual(["text/plain","text/html",]);
+    });
+  });
+
+  describe('formats', () => {
+    test('formats returns the expected result for plain text', () => {
+      const fragment = new Fragment({
+        ownerId: '1234',
+        type: 'text/markdown',
+        size: 0,
+      });
+      expect(fragment.formats).toEqual(["text/plain","text/html","text/markdown"]);
+    });
+  });
+
   describe('save(), getData(), setData(), byId(), byUser(), delete()', () => {
     test('byUser() returns an empty array if there are no fragments for this user', async () => {
       expect(await Fragment.byUser('1234')).toEqual([]);
