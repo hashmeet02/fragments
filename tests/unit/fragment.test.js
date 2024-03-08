@@ -173,7 +173,7 @@ describe('Fragment class', () => {
         type: 'text/html',
         size: 0,
       });
-      expect(fragment.formats).toEqual(["text/plain","text/html",]);
+      expect(fragment.formats).toEqual(['text/plain', 'text/html']);
     });
   });
 
@@ -184,7 +184,7 @@ describe('Fragment class', () => {
         type: 'text/markdown',
         size: 0,
       });
-      expect(fragment.formats).toEqual(["text/plain","text/html","text/markdown"]);
+      expect(fragment.formats).toEqual(['text/plain', 'text/html', 'text/markdown']);
     });
   });
 

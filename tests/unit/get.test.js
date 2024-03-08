@@ -97,23 +97,22 @@ describe('GET /v1/fragments', () => {
     expect(res.text).toBe('<h1># Test Fragment</h1>\n');
   });
 
-    //test to produce error during conversion unsupported extension
-    test('user gets error when converting text/plain to unsupported extension', async () => {
-      const req = await request(app)
-        .post('/v1/fragments/')
-        .auth('user1@email.com', 'password1')
-        .send('Test Fragment')
-        .set('Content-type', 'text/plain');
-      const id = req.body.fragment.id;
-      const res = await request(app)
-        .get(`/v1/fragments/${id}.html`)
-        .auth('user1@email.com', 'password1');
-      expect(res.statusCode).toBe(415);
-    });
-
+  //test to produce error during conversion unsupported extension
+  test('user gets error when converting text/plain to unsupported extension', async () => {
+    const req = await request(app)
+      .post('/v1/fragments/')
+      .auth('user1@email.com', 'password1')
+      .send('Test Fragment')
+      .set('Content-type', 'text/plain');
+    const id = req.body.fragment.id;
+    const res = await request(app)
+      .get(`/v1/fragments/${id}.html`)
+      .auth('user1@email.com', 'password1');
+    expect(res.statusCode).toBe(415);
+  });
 
   //GET /fragments?expanded=11 should be able to get a list of expanded fragments for the authenticated user.
-  test('authenticated user gets list of fragments with GET /fragments/?expanded=1', async()=>{
+  test('authenticated user gets list of fragments with GET /fragments/?expanded=1', async () => {
     await request(app)
       .post('/v1/fragments')
       .send('sample fragment 1')
@@ -124,63 +123,60 @@ describe('GET /v1/fragments', () => {
       .send('sample fragment 2')
       .set('Content-type', 'text/plain')
       .auth('user1@email.com', 'password1');
-    const fragmentsList=await(listFragments(hash('user1@email.com'),1));
-    const res=await request(app)
+    const fragmentsList = await listFragments(hash('user1@email.com'), 1);
+    const res = await request(app)
       .get('/v1/fragments?expand=1')
-      .auth('user1@email.com',"password1");
+      .auth('user1@email.com', 'password1');
     expect(res.statusCode).toBe(200);
     expect(res.body.status).toBe('ok');
     expect(res.body.fragments).toEqual(fragmentsList);
-  })
+  });
 
-    //GET /fragments should be able to get a list of fragments ids for the authenticated user.
-    test('authenticated user gets list of fragments with GET /fragments/', async()=>{
-      await request(app)
-        .post('/v1/fragments')
-        .send('sample fragment 1')
-        .set('Content-type', 'text/plain')
-        .auth('user1@email.com', 'password1');
-      await request(app)
-        .post('/v1/fragments')
-        .send('sample fragment 2')
-        .set('Content-type', 'text/plain')
-        .auth('user1@email.com', 'password1');
-      const fragmentsList=await(listFragments(hash('user1@email.com'),0));
-      const res=await request(app)
-        .get('/v1/fragments')
-        .auth('user1@email.com',"password1");
-      expect(res.statusCode).toBe(200);
-      expect(res.body.status).toBe('ok');
-      expect(res.body.fragments).toEqual(fragmentsList);
-    })
+  //GET /fragments should be able to get a list of fragments ids for the authenticated user.
+  test('authenticated user gets list of fragments with GET /fragments/', async () => {
+    await request(app)
+      .post('/v1/fragments')
+      .send('sample fragment 1')
+      .set('Content-type', 'text/plain')
+      .auth('user1@email.com', 'password1');
+    await request(app)
+      .post('/v1/fragments')
+      .send('sample fragment 2')
+      .set('Content-type', 'text/plain')
+      .auth('user1@email.com', 'password1');
+    const fragmentsList = await listFragments(hash('user1@email.com'), 0);
+    const res = await request(app).get('/v1/fragments').auth('user1@email.com', 'password1');
+    expect(res.statusCode).toBe(200);
+    expect(res.body.status).toBe('ok');
+    expect(res.body.fragments).toEqual(fragmentsList);
+  });
 
-    //GET/ fragments/:id/info should return the metadata for the given fragment with valid id
-    test('Get fragments metadata using valid Id', async()=>{
-      const req=await request(app)
-        .post('/v1/fragments')
-        .send('sample fragment 1')
-        .set('Content-type', 'text/plain')
-        .auth('user1@email.com', 'password1');
-      const id = req.body.fragment.id;
-      const res=await request(app)
-        .get(`/v1/fragments/${id}/info`)
-        .auth('user1@email.com', 'password1');
-      expect(res.statusCode).toBe(200);
-      expect(req.body).toEqual(res.body);
-    })
+  //GET/ fragments/:id/info should return the metadata for the given fragment with valid id
+  test('Get fragments metadata using valid Id', async () => {
+    const req = await request(app)
+      .post('/v1/fragments')
+      .send('sample fragment 1')
+      .set('Content-type', 'text/plain')
+      .auth('user1@email.com', 'password1');
+    const id = req.body.fragment.id;
+    const res = await request(app)
+      .get(`/v1/fragments/${id}/info`)
+      .auth('user1@email.com', 'password1');
+    expect(res.statusCode).toBe(200);
+    expect(req.body).toEqual(res.body);
+  });
 
-    //GET/ fragments/:id/info should throw 404 error with invalid id
-    test('Get fragments metadata using valid Id', async()=>{
-      await request(app)
-        .post('/v1/fragments')
-        .send('sample fragment 1')
-        .set('Content-type', 'text/plain')
-        .auth('user1@email.com', 'password1');
-      const id = 1
-      const res=await request(app)
-        .get(`/v1/fragments/${id}/info`)
-        .auth('user1@email.com', 'password1');
-      expect(res.statusCode).toBe(404);
-    })
-
+  //GET/ fragments/:id/info should throw 404 error with invalid id
+  test('Get fragments metadata using valid Id', async () => {
+    await request(app)
+      .post('/v1/fragments')
+      .send('sample fragment 1')
+      .set('Content-type', 'text/plain')
+      .auth('user1@email.com', 'password1');
+    const id = 1;
+    const res = await request(app)
+      .get(`/v1/fragments/${id}/info`)
+      .auth('user1@email.com', 'password1');
+    expect(res.statusCode).toBe(404);
+  });
 });
