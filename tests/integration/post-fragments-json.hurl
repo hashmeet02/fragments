@@ -30,7 +30,7 @@ jsonpath "$.fragment.created" matches /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3
 jsonpath "$.fragment.updated" isString
 jsonpath "$.fragment.updated" matches /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/
 jsonpath "$.fragment.type" == "application/json"
-jsonpath "$.fragment.size" == 165
+jsonpath "$.fragment.size" == 122
 
 # Capture the Location URL into a variable named `url`
 [Captures]
