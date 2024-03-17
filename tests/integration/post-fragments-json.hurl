@@ -44,7 +44,7 @@ user1@email.com:password1
 
 HTTP/1.1 200
 Content-Type: application/json; charset=utf-8
-Content-Length: 165
+Content-Length: 122
 {
   "id": 5,
   "name": "Avatar",
