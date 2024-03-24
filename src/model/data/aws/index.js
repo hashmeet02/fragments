@@ -25,7 +25,7 @@ async function writeFragmentData(ownerId, id, data) {
   console.log(process.env.AWS_S3_BUCKET_NAME)
   // Create the PUT API params from our details
   const params = {
-    Bucket: (process.env.AWS_S3_BUCKET_NAME || "hsaini28-fragments"),
+    Bucket: (process.env.AWS_S3_BUCKET_NAME ),
     // Our key will be a mix of the ownerID and fragment id, written as a path
     Key: `${ownerId}/${id}`,
     Body: data,
