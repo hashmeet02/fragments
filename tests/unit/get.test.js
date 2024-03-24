@@ -35,7 +35,7 @@ describe('GET /v1/fragments', () => {
       .auth('user1@email.com', 'password1');
 
     expect(res.statusCode).toBe(404);
-    expect(res.body.error.message).toBe(`Fragment with invalidID doesn't exist`);
+    expect(res.body.error.message).toBe(`Fragment with given id doesn't exist`);
   });
 
   //authenticated user can successfully retrieve fragment with particular Id
