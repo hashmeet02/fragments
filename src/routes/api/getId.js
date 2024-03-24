@@ -51,10 +51,10 @@ module.exports = async (req, res) => {
       }
     }
   } catch (err) {
-    if (err.message == `Fragment with given id can't be found`) {
+    if (err.message == "unable to read fragment data") {
       res
         .status(404)
-        .json(createErrorResponse(404, `Fragment with ${req.params.id} doesn't exist`));
+        .json(createErrorResponse(404, `Fragment with given id doesn't exist`));
     } else {
       res
         .status(415)
