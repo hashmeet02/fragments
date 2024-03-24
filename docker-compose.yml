@@ -9,6 +9,7 @@ services:
     # and current directory as the build context
     build: .
     # Environment variables to use
+    
     environment:
       # Our API will be running on http://localhost:8080
       - API_URL=http://localhost:8080
