@@ -28,7 +28,7 @@ module.exports = async (req, res) => {
       .send(createSuccessResponse({ fragment }));
     logger.info({ fragment: fragment }, `Fragment posted successfully`);
   } catch (err) {
-    logger.error('Unable to POST the fragment');
+    logger.error('Unable to POST the fragment', err);
     res.status(500).json(createErrorResponse(500, 'Internal server error'));
   }
 };
