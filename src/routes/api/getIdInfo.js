@@ -17,6 +17,6 @@ module.exports = async (req, res) => {
       logger.info({ fragmentInfo: fragment }, `Fragment metadata successfully received`);
     }
   } catch (err) {
-    res.status(404).json(createErrorResponse(404, err));
+    res.status(404).json(createErrorResponse(404, "Fragment metadata with give id not found"));
   }
 };
