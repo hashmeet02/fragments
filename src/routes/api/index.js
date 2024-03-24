@@ -28,6 +28,9 @@ const rawBody = () =>
 // You can use Buffer.isBuffer(req.body) to test if it was parsed by the raw body parser.
 router.post('/fragments', rawBody(), require('./post'));
 
+// DELETE /v1/fragments
+router.delete('/fragments/:id', require('./delete'));
+
 // Define our first route, which will be: GET /v1/fragments
 router.get('/fragments', require('./get'));
 
