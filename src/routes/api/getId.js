@@ -1,66 +1,46 @@
-// src/routes/api/getId.js
-
-/**
- * Get a the fragment for the current user that matches the
- * id sent as parameter and is of appropriate extension type
- */
 const { createErrorResponse } = require('../../response');
 const { Fragment } = require('../../model/fragment');
-const logger = require('../../logger');
 const path = require('path');
-const MarkdownIt = require('markdown-it');
-const md = new MarkdownIt();
+const logger = require('../../logger');
 
 module.exports = async (req, res) => {
-  const extension = path.extname(req.params.id);
-  const fragmentId = path.basename(req.params.id, extension);
+  // see https://nodejs.org/api/path.html#pathparsepath
+  const query = path.parse(req.params.id);
+  let extension = query.ext.split('.').pop(); // get the extension without a dot
   try {
-    let fragmentMetadata = await Fragment.byId(req.user, fragmentId);
+    let fragmentMetadata = await Fragment.byId(req.user, query.name);
     let fragment = await fragmentMetadata.getData();
+    extension = fragmentMetadata.extConvert(extension); // get extension type name
 
-    if (!extension) {
-      res.set('Content-type', fragmentMetadata.mimeType).status(200).send(fragment);
+    // if no conversion needed or the fragment is already of the same conversion type
+    if (query.ext == '' || fragmentMetadata.type.endsWith(extension)) {
+      res.setHeader('Content-Type', fragmentMetadata.type);
+      res.status(200).send(Buffer.from(fragment));
       logger.info(
         { fragmentData: fragment, contentType: fragmentMetadata.type },
-        'successfully received Fragment data'
+        `Successfully received Fragment data!`
       );
-    } else if (extension) {
-      if (
-        (fragmentMetadata.mimeType.startsWith('text/') && extension === '.txt') ||
-        (fragmentMetadata.mimeType === 'applications/json' && extension === '.txt')
-      ) {
-        fragmentMetadata.type = 'text/plain';
-        res.set('Content-type', fragmentMetadata.mimeType).status(200).send(fragment);
-        logger.info({ targetType: extension }, `Extension converted to ${extension}`);
-      } else if (
-        (fragmentMetadata.mimeType === 'text/markdown' && extension === '.md') ||
-        (fragmentMetadata.mimeType === 'text/html' && extension === '.html') ||
-        (fragmentMetadata.mimeType === 'application/json' && extension === '.json')
-      ) {
-        res.set('Content-type', fragmentMetadata.mimeType).status(200).send(fragment);
-        logger.info({ targetType: extension }, `Extension converted to ${extension}`);
-      } else if (fragmentMetadata.mimeType === 'text/markdown' && extension === '.html') {
-        fragmentMetadata.type = 'text/html';
-        res
-          .set('Content-type', fragmentMetadata.mimeType)
-          .status(200)
-          .send(md.render(`# ${fragment}`));
-        logger.info({ targetType: extension }, `Extension converted to ${extension}`);
-      } else {
-        throw new Error('Unknown or unsupported extension type!');
+    } else {
+      // conversion needed
+      try {
+        // not image conversion
+        if (fragmentMetadata.isText || fragmentMetadata.type == 'application/json') {
+          let result = await fragmentMetadata.textConvert(extension);
+          res.setHeader('Content-Type', `text/${extension}`);
+          res.status(200).send(Buffer.from(result));
+          logger.info({ targetType: extension }, `Fragments successfully converted to ${extension}`);
+        } else {
+          // image conversion
+          let result = await fragmentMetadata.imageConvert(extension);
+          res.setHeader('Content-Type', `image/${extension}`);
+          res.status(200).send(result);
+          logger.info({ targetType: extension }, `Fragment successfully converted to ${extension}`);
+        }
+      } catch (err) {
+        res.status(415).json(createErrorResponse(415, `Given extension is either unsupported or incorrect`));
       }
     }
   } catch (err) {
-    if (err.message == "unable to read fragment data" || err.message== "Fragment with given id can't be found") {
-      res
-        .status(404)
-        .json(createErrorResponse(404, `Fragment with given id doesn't exist`));
-    } else {
-      res
-        .status(415)
-        .json(
-          createErrorResponse(415, `Cannot convert and return Fragment as extension ${extension}`)
-        );
-    }
+    res.status(404).json(createErrorResponse(404, `Fragment with given id doesn't exist`));
   }
 };
