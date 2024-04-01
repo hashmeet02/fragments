@@ -47,7 +47,7 @@ class Fragment {
       throw new Error(`Required ownerId. Received ownerId:${ownerId}`);
     }
 
-    if (type) {
+    if (supportedTypes.includes(type)) {
       this.type = type;
     } else {
       throw new Error(`Fragment type is invalid. Received type:${type}`);
