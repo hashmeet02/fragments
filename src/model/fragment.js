@@ -7,6 +7,9 @@ const { randomUUID } = require('crypto');
 const contentType = require('content-type');
 
 const logger = require('../logger');
+const sharp = require('sharp');
+const MarkdownIt = require('markdown-it'),
+  md = new MarkdownIt();
 
 // Functions for working with fragment metadata/data using our DB
 const {
@@ -44,7 +47,7 @@ class Fragment {
       throw new Error(`Required ownerId. Received ownerId:${ownerId}`);
     }
 
-    if (Fragment.isSupportedType(type)) {
+    if (type) {
       this.type = type;
     } else {
       throw new Error(`Fragment type is invalid. Received type:${type}`);
@@ -70,6 +73,7 @@ class Fragment {
     }
   }
 
+
   /**
    * Get all fragments (id or full) for the given user
    * @param {string} ownerId user's hashed email
@@ -77,10 +81,16 @@ class Fragment {
    * @returns Promise<Array<Fragment>>
    */
   static async byUser(ownerId, expand = false) {
-    logger.info({ ownerId, expand }, 'byUser()');
-    const result = await listFragments(ownerId, expand);
-    return result;
+    try {
+      logger.debug({ ownerId, expand }, 'byUser()');
+      const fragments = await listFragments(ownerId, expand);
+      return expand ? fragments.map((fragment) => new Fragment(fragment)) : fragments;
+    } catch (err) {
+      // empty array for user with no fragments.
+      return [];
+    }
   }
+  
 
   /**
    * Gets a fragment for the user by the given id.
@@ -90,9 +100,11 @@ class Fragment {
    */
   static async byId(ownerId, id) {
     logger.info({ ownerId, id }, 'byId()');
-    const result = await readFragment(ownerId, id);
-    if (!result) throw new Error(`Fragment with given id can't be found`);
-    return result;
+    try {
+      return new Fragment(await readFragment(ownerId, id));
+    } catch (error) {
+      throw new Error('Unable to find fragment with that id');
+    }
   }
 
   /**
@@ -119,11 +131,7 @@ class Fragment {
    * @returns Promise<Buffer>
    */
   getData() {
-    try {
-      return readFragmentData(this.ownerId, this.id);
-    } catch (err) {
-      throw new Error(`Data for this fragment can't be retrieved`);
-    }
+    return readFragmentData(this.ownerId, this.id);
   }
 
   /**
@@ -132,10 +140,17 @@ class Fragment {
    * @returns Promise<void>
    */
   async setData(data) {
-    this.size = Buffer.byteLength(data);
-    this.updated = new Date().toISOString();
-    await writeFragment(this);
-    return await writeFragmentData(this.ownerId, this.id, data);
+    try {
+      if (!data) {
+        return Promise.reject(new Error('Data cannot be empty.'));
+      }
+      this.updated = new Date().toISOString();
+      this.size = data.length;
+      await writeFragment(this);
+      return writeFragmentData(this.ownerId, this.id, data);
+    } catch (err) {
+      Promise.reject(err);
+    }
   }
 
   /**
@@ -162,16 +177,23 @@ class Fragment {
    */
   get formats() {
     let result = [];
-    if (this.type.includes('plain')) {
-      result.push(this.mimeType);
-    } else if (this.type.includes('html')) {
-      result.push('text/plain');
-      result.push(this.mimeType);
-    } else if (this.type.includes('markdown')) {
-      result.push('text/plain');
-      result.push('text/html');
-      result.push(this.mimeType);
+    if (
+      this.type.includes('image/png') ||
+      this.type.includes('image/jpeg') ||
+      this.type.includes('image/gif') ||
+      this.type.includes('image/webp')
+    ) {
+      result = ['image/png', 'image/jpeg', 'image/gif', 'image/webp'];
+    } else if (this.type.includes('text/plain')) {
+      result = ['text/plain'];
+    } else if (this.type.includes('text/markdown')) {
+      result = ['text/plain', 'text/html', 'text/markdown'];
+    } else if (this.type.includes('text/html')) {
+      result = ['text/plain', 'text/html'];
+    } else if (this.type.includes('application/json')) {
+      result = ['application/json', 'text/plain'];
     }
+
     return result;
   }
 
@@ -182,6 +204,55 @@ class Fragment {
    */
   static isSupportedType(value) {
     return supportedTypes.includes(value);
+  }
+
+  async textConvert(value) {
+    var result, fragmentData;
+    fragmentData = await this.getData();
+    if (value == 'plain') {
+      if (this.type == 'application/json') {
+        result = JSON.parse(fragmentData);
+      } else {
+        result = fragmentData;
+      }
+    } else if (value == 'html') {
+      if (this.type.endsWith('markdown')) {
+        result = md.render(fragmentData.toString());
+      }
+    }
+    return result;
+  }
+
+  async imageConvert(value) {
+    var result, fragmentData;
+    fragmentData = await this.getData();
+    if (this.type.startsWith('image')) {
+      if (value == 'gif') {
+        result = sharp(fragmentData).gif();
+      } else if (value == 'jpg' || value == 'jpeg') {
+        result = sharp(fragmentData).jpeg();
+      } else if (value == 'webp') {
+        result = sharp(fragmentData).webp();
+      } else if (value == 'png') {
+        result = sharp(fragmentData).png();
+      }
+    }
+    return result.toBuffer();
+  }
+
+  // based on the passed extension returns type name
+  extConvert(value) {
+    var extension;
+    if (value == 'txt') {
+      extension = 'plain';
+    } else if (value == 'jpg') {
+      extension = 'jpeg';
+    } else if (value == 'md') {
+      extension = 'markdown';
+    } else {
+      extension = value;
+    }
+    return extension;
   }
 }
 
