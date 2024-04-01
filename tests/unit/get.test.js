@@ -94,7 +94,7 @@ describe('GET /v1/fragments', () => {
       .get(`/v1/fragments/${id}.html`)
       .auth('user1@email.com', 'password1');
     expect(res.statusCode).toBe(200);
-    expect(res.text).toBe('<h1># Test Fragment</h1>\n');
+    expect(res.text).toBe('<h1>Test Fragment</h1>\n');
   });
 
   //test to produce error during conversion unsupported extension
