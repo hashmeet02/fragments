@@ -1,7 +1,6 @@
 const { createErrorResponse, createSuccessResponse } = require('../../response');
 const { Fragment } = require('../../model/fragment');
 const logger = require('../../logger');
-const path = require('path');
 
 /**
  * Get fragment metadata for given id (GET /fragments/:id/info)
