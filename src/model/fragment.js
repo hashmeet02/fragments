@@ -73,7 +73,6 @@ class Fragment {
     }
   }
 
-
   /**
    * Get all fragments (id or full) for the given user
    * @param {string} ownerId user's hashed email
@@ -90,7 +89,6 @@ class Fragment {
       return [];
     }
   }
-  
 
   /**
    * Gets a fragment for the user by the given id.

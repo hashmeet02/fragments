@@ -6,8 +6,6 @@ const { PutObjectCommand, GetObjectCommand, DeleteObjectCommand } = require('@aw
 const { PutCommand, GetCommand, QueryCommand, DeleteCommand } = require('@aws-sdk/lib-dynamodb');
 const logger = require('../../../logger');
 
-
-
 // Write a fragment's metadata to memory db. Returns a Promise
 // Writes a fragment to DynamoDB. Returns a Promise.
 function writeFragment(fragment) {
@@ -54,10 +52,10 @@ async function readFragment(ownerId, id) {
 // Writes a fragment's data to an S3 Object in a Bucket
 // https://github.com/awsdocs/aws-sdk-for-javascript-v3/blob/main/doc_source/s3-example-creating-buckets.md#upload-an-existing-object-to-an-amazon-s3-bucket
 async function writeFragmentData(ownerId, id, data) {
-  console.log(process.env.AWS_S3_BUCKET_NAME)
+  console.log(process.env.AWS_S3_BUCKET_NAME);
   // Create the PUT API params from our details
   const params = {
-    Bucket: (process.env.AWS_S3_BUCKET_NAME ),
+    Bucket: process.env.AWS_S3_BUCKET_NAME,
     // Our key will be a mix of the ownerID and fragment id, written as a path
     Key: `${ownerId}/${id}`,
     Body: data,
@@ -69,7 +67,7 @@ async function writeFragmentData(ownerId, id, data) {
   try {
     // Use our client to send the command
     await s3Client.send(command);
-    logger.debug("fragment data added to s3")
+    logger.debug('fragment data added to s3');
   } catch (err) {
     // If anything goes wrong, log enough info that we can debug
     const { Bucket, Key } = params;

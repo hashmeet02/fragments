@@ -28,7 +28,10 @@ module.exports = async (req, res) => {
           let result = await fragmentMetadata.textConvert(extension);
           res.setHeader('Content-Type', `text/${extension}`);
           res.status(200).send(Buffer.from(result));
-          logger.info({ targetType: extension }, `Fragments successfully converted to ${extension}`);
+          logger.info(
+            { targetType: extension },
+            `Fragments successfully converted to ${extension}`
+          );
         } else {
           // image conversion
           let result = await fragmentMetadata.imageConvert(extension);
@@ -37,7 +40,9 @@ module.exports = async (req, res) => {
           logger.info({ targetType: extension }, `Fragment successfully converted to ${extension}`);
         }
       } catch (err) {
-        res.status(415).json(createErrorResponse(415, `Given extension is either unsupported or incorrect`));
+        res
+          .status(415)
+          .json(createErrorResponse(415, `Given extension is either unsupported or incorrect`));
       }
     }
   } catch (err) {
