@@ -1,9 +1,9 @@
 # 1. Authenticated POST to /v1/fragments
 POST http://localhost:8080/v1/fragments
-Content-Type: text/html
+Content-Type: text/markdown
 [BasicAuth]
 user1@email.com:password1
-`<h2>This is a test fragment of type html</h2>`
+`## This is a test fragment of type markdown`
 
 # 2. Server should return a 201
 HTTP/1.1 201
@@ -16,7 +16,7 @@ GET {{url}}/info
 [BasicAuth]
 user1@email.com:password1
 
-# Server should return expected response
+# The server should return the expected response
 HTTP/1.1 200
 Content-Type: application/json; charset=utf-8
 [Asserts]
@@ -27,17 +27,17 @@ jsonpath "$.fragment.created" isString
 jsonpath "$.fragment.created" matches /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/
 jsonpath "$.fragment.updated" isString
 jsonpath "$.fragment.updated" matches /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/
-jsonpath "$.fragment.type" == "text/html"
-jsonpath "$.fragment.size" == 45
+jsonpath "$.fragment.type" == "text/markdown"
+jsonpath "$.fragment.size" == 43
 
-# 4. Receive newly created html fragment as text
-GET {{url}}.txt
+# 4. Get markdown fragment as html
+GET {{url}}.html
 [BasicAuth]
 user1@email.com:password1
 
-# Confirm that the server returns expected response
+# Server should return the expected response
 HTTP/1.1 200
-Content-Type: text/plain
-Content-Length: 45
+Content-Type: text/html
+Content-Length: 50
 [Asserts]
-"<h2>This is a test fragment of type html</h2>"
+body == "<h2>This is a test fragment of type markdown</h2>\n"
