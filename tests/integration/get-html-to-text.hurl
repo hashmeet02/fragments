@@ -3,7 +3,7 @@ POST http://localhost:8080/v1/fragments
 Content-Type: text/html
 [BasicAuth]
 user1@email.com:password1
-`<h2>This is a test fragment of type html</h2>`
+```<h2>This is a test fragment of type html</h2>```
 
 # 2. Server should return a 201
 HTTP/1.1 201
@@ -40,4 +40,4 @@ HTTP/1.1 200
 Content-Type: text/plain
 Content-Length: 45
 [Asserts]
-"<h2>This is a test fragment of type html</h2>"
+body == "<h2>This is a test fragment of type html</h2>"
