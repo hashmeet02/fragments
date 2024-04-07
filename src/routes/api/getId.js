@@ -42,7 +42,7 @@ module.exports = async (req, res) => {
       } catch (err) {
         res
           .status(415)
-          .json(createErrorResponse(415, `Given extension is either unsupported or incorrect`));
+          .send(createErrorResponse(415, `Given extension is either unsupported or incorrect`));
       }
     }
   } catch (err) {
