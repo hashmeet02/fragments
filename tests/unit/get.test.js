@@ -1,12 +1,13 @@
-// tests/unit/get.test.js
+//tests/unit/get.test.js
 
 const request = require('supertest');
+const fs = require('fs');
 const hash = require('../../src/hash');
 const app = require('../../src/app');
 const { readFragmentData, listFragments } = require('../../src/model/data');
 
 describe('GET /v1/fragments', () => {
-  // If the request is missing the Authorization header, it should be forbidden
+  //If the request is missing the Authorization header, it should be forbidden
   test('unauthenticated requests are denied', () => request(app).get('/v1/fragments').expect(401));
 
   // If the wrong username/password pair are used (no such user), it should be forbidden
@@ -97,7 +98,6 @@ describe('GET /v1/fragments', () => {
     expect(res.text).toBe('<h1>Test Fragment</h1>\n');
   });
 
-  //test to produce error during conversion unsupported extension
   test('user gets error when converting text/plain to unsupported extension', async () => {
     const req = await request(app)
       .post('/v1/fragments/')
@@ -109,6 +109,53 @@ describe('GET /v1/fragments', () => {
       .get(`/v1/fragments/${id}.html`)
       .auth('user1@email.com', 'password1');
     expect(res.statusCode).toBe(415);
+  });
+
+  test('GET existing image by ID ', async () => {
+    const req = await request(app)
+      .post('/v1/fragments/')
+      .auth('user1@email.com', 'password1')
+      .set('Content-type', 'image/jpeg')
+      .send(fs.readFileSync(`${__dirname}/test-files/phone.jpeg`));
+    expect(req.status).toBe(201);
+
+    const res = await request(app)
+      .get(`/v1/fragments/${req.body.fragment.id}`)
+      .auth('user1@email.com', 'password1');
+    expect(res.type).toBe('image/jpeg');
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toEqual(Buffer.from(fs.readFileSync(`${__dirname}/test-files/phone.jpeg`)));
+    console.log("im here")
+  });
+  
+  test('successful conversion of the existing jpg file to webp', async () => {
+    const req = await request(app)
+      .post('/v1/fragments/')
+      .auth('user1@email.com', 'password1')
+      .set('Content-type', 'image/jpeg')
+      .send(fs.readFileSync(`${__dirname}/test-files/phone.jpeg`));
+    expect(req.status).toBe(201);
+
+    const res = await request(app)
+      .get(`/v1/fragments/${req.body.fragment.id}.webp`)
+      .auth('user1@email.com', 'password1');
+    expect(res.statusCode).toBe(200);
+    expect(res.type).toBe('image/webp');
+  });
+
+  test('successful conversion of the existing jpg file to png', async () => {
+    const req = await request(app)
+      .post('/v1/fragments/')
+      .auth('user1@email.com', 'password1')
+      .set('Content-type', 'image/jpeg')
+      .send(fs.readFileSync(`${__dirname}/test-files/phone.jpeg`));
+    expect(req.status).toBe(201);
+
+    const res = await request(app)
+      .get(`/v1/fragments/${req.body.fragment.id}.png`)
+      .auth('user1@email.com', 'password1');
+    expect(res.statusCode).toBe(200);
+    expect(res.type).toBe('image/png');
   });
 
   //GET /fragments?expanded=11 should be able to get a list of expanded fragments for the authenticated user.

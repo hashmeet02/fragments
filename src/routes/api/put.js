@@ -13,7 +13,7 @@ module.exports = async (req, res) => {
     } else {
       await fragment.setData(req.body);
       res.location(`${api}/v1/fragments/${fragment.id}`);
-      res.status(200).send(createSuccessResponse({ fragment }));
+      res.status(200).send(createSuccessResponse({ fragment, formats: fragment.formats }));
       logger.info({ fragment: fragment }, `Fragment data updated successfully.`);
     }
   } catch (err) {

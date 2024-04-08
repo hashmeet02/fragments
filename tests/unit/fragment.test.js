@@ -272,4 +272,16 @@ describe('Fragment class', () => {
       expect(() => Fragment.byId('1234', fragment.id)).rejects.toThrow();
     });
   });
+
+  describe('to test extConvert() function', () => {
+    test('successful return of jpeg from png parameter', async () => {
+      const ext = 'jpg';
+      expect(() => Fragment.extConvert(ext) == 'jpeg');
+    });
+
+    test('successful return of plain from txt parameter', async () => {
+      const ext = 'txt';
+      expect(() => Fragment.extConvert(ext) == 'plain');
+    });
+  });
 });

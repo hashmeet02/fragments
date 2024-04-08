@@ -31,7 +31,9 @@ COPY package*.json /app/
 COPY ./src ./src
 
 # Install node dependencies defined in package-lock.json
-RUN npm ci
+RUN npm ci && \
+    npm uninstall sharp && \
+    npm install --platform=linuxmusl --arch=x64 sharp@0.30.7
 
 # Copy our HTPASSWD file
 COPY ./tests/.htpasswd ./tests/.htpasswd
