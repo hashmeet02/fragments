@@ -4,8 +4,8 @@ const app = require('../../src/app');
 const { readFragmentData } = require('../../src/model/data');
 
 describe('PUT /v1/fragments/:id', () => {
-  
-  test('access denied for unauthenticated users', () => request(app).put('/v1/fragments').expect(401));
+  test('access denied for unauthenticated users', () =>
+    request(app).put('/v1/fragments').expect(401));
 
   test('authenticated user can successfully update fragment data', async () => {
     const post = await request(app)

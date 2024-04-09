@@ -125,9 +125,9 @@ describe('GET /v1/fragments', () => {
     expect(res.type).toBe('image/jpeg');
     expect(res.statusCode).toBe(200);
     expect(res.body).toEqual(Buffer.from(fs.readFileSync(`${__dirname}/test-files/phone.jpeg`)));
-    console.log("im here")
+    console.log('im here');
   });
-  
+
   test('successful conversion of the existing jpg file to webp', async () => {
     const req = await request(app)
       .post('/v1/fragments/')

@@ -209,7 +209,7 @@ class Fragment {
     fragmentData = await this.getData();
     if (value == 'plain') {
       if (this.type == 'application/json') {
-        logger.debug("conversion done from text to application")
+        logger.debug('conversion done from text to application');
         result = JSON.parse(fragmentData);
       } else {
         result = fragmentData;
