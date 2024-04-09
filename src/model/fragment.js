@@ -47,7 +47,7 @@ class Fragment {
       throw new Error(`Required ownerId. Received ownerId:${ownerId}`);
     }
 
-    if (type) {
+    if (supportedTypes.includes(type)) {
       this.type = type;
     } else {
       throw new Error(`Fragment type is required.`);
@@ -209,6 +209,7 @@ class Fragment {
     fragmentData = await this.getData();
     if (value == 'plain') {
       if (this.type == 'application/json') {
+        logger.debug("conversion done from text to application")
         result = JSON.parse(fragmentData);
       } else {
         result = fragmentData;

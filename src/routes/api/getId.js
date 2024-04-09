@@ -25,6 +25,7 @@ module.exports = async (req, res) => {
       try {
         // not image conversion
         if (fragmentMetadata.isText || fragmentMetadata.type == 'application/json') {
+          logger.debug(`text or json conversion ${extension}`);
           let result = await fragmentMetadata.textConvert(extension);
           res.setHeader('Content-Type', `text/${extension}`);
           res.status(200).send(Buffer.from(result));
