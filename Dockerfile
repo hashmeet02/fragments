@@ -27,9 +27,6 @@ WORKDIR /app
 # that `app` is a directory and not a file.
 COPY package*.json /app/
 
-# Copy src to /app/src/
-COPY ./src ./src
-
 # Install node dependencies defined in package-lock.json
 RUN npm ci && \
     npm uninstall sharp && \
@@ -44,6 +41,10 @@ FROM node:21-alpine3.18@sha256:911976032e5e174fdd8f5fb63d7089b09d59d21dba3df2728
 
 WORKDIR /app
 
+
+# Copy src to /app/src/
+COPY ./src ./src
+
 COPY --from=dependencies \
   /app/node_modules/ /app/ \
   /app/src/ /app/ \
@@ -57,10 +58,10 @@ HEALTHCHECK --interval=15s --timeout=30s --start-period=10s --retries=3 \
   CMD curl --fail http://localhost:${PORT}/ || exit 1
   
 # Start the container by running our server
-CMD ["npm", "start"]
+CMD ["node", "start"]
 
 # We run our service on port 8080
-EXPOSE 8080
+EXPOSE ${PORT}
 
 
 
